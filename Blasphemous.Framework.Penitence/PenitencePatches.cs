@@ -17,7 +17,7 @@ namespace Blasphemous.Framework.Penitence;
 
 // Add custom penitences to list
 [HarmonyPatch(typeof(PenitenceManager), "ResetPenitencesList")]
-internal class PenitenceManager_Patch
+class PenitenceManager_Patch
 {
     public static void Postfix(List<IPenitence> ___allPenitences)
     {
@@ -25,9 +25,21 @@ internal class PenitenceManager_Patch
     }
 }
 
+// Add any missing custom penitences whe loading save data
+[HarmonyPatch(typeof(PenitenceManager), nameof(PenitenceManager.SetCurrentPersistentState))]
+class Penitence_Load_Patch
+{
+    public static void Postfix(List<IPenitence> ___allPenitences)
+    {
+        ___allPenitences.AddRange(PenitenceRegister.Penitences
+            .Where(x => !___allPenitences.Any(y => x.Id == y.Id))
+            .Select(p => new ModPenitenceSystem(p.Id) as IPenitence));
+    }
+}
+
 // Add config settings for custom penitences
 [HarmonyPatch(typeof(PenitenceSlot), "SetPenitenceConfig")]
-internal class PenitenceSlot_Patch
+class PenitenceSlot_Patch
 {
     public static void Postfix(Dictionary<string, SelectSaveSlots.PenitenceData> ___allPenitences)
     {
@@ -38,7 +50,7 @@ internal class PenitenceSlot_Patch
     }
 }
 [HarmonyPatch(typeof(GameplayWidget), "Awake")]
-internal class GameplayWidget_Patch
+class GameplayWidget_Patch
 {
     public static void Postfix(List<SelectSaveSlots.PenitenceData> ___PenitencesConfig)
     {
@@ -48,22 +60,22 @@ internal class GameplayWidget_Patch
 
 // Set selecting status when changing options
 [HarmonyPatch(typeof(ChoosePenitenceWidget), "Option_SelectPE01")]
-internal class ChoosePenitenceWidgetSelect1_Patch
+class ChoosePenitenceWidgetSelect1_Patch
 {
     public static void Postfix() => Main.PenitenceFramework.CurrentSelection = PenitenceFramework.Selection.Normal;
 }
 [HarmonyPatch(typeof(ChoosePenitenceWidget), "Option_SelectPE02")]
-internal class ChoosePenitenceWidgetSelect2_Patch
+class ChoosePenitenceWidgetSelect2_Patch
 {
     public static void Postfix() => Main.PenitenceFramework.CurrentSelection = PenitenceFramework.Selection.Normal;
 }
 [HarmonyPatch(typeof(ChoosePenitenceWidget), "Option_SelectPE03")]
-internal class ChoosePenitenceWidgetSelect3_Patch
+class ChoosePenitenceWidgetSelect3_Patch
 {
     public static void Postfix() => Main.PenitenceFramework.CurrentSelection = PenitenceFramework.Selection.Normal;
 }
 [HarmonyPatch(typeof(ChoosePenitenceWidget), "OnClose")]
-internal class ChoosePenitenceWidgetClose_Patch
+class ChoosePenitenceWidgetClose_Patch
 {
     public static void Postfix()
     {
@@ -76,7 +88,7 @@ internal class ChoosePenitenceWidgetClose_Patch
 
 // Display buttons and store action when opening widget
 [HarmonyPatch(typeof(ChoosePenitenceWidget), "Open", typeof(Action), typeof(Action))]
-internal class ChoosePenitenceWidgetOpen_Patch
+class ChoosePenitenceWidgetOpen_Patch
 {
     public static void Postfix(Action onChoosingPenitence)
     {
@@ -101,7 +113,7 @@ internal class ChoosePenitenceWidgetOpen_Patch
 
 // Update selection status when selecting normally or changing custom penitences
 [HarmonyPatch(typeof(ChoosePenitenceWidget), "Option_SelectNoPenitence")]
-internal class ChoosePenitenceWidgetSelectNone_Patch
+class ChoosePenitenceWidgetSelectNone_Patch
 {
     public static bool Prefix(Text ___penitenceTitle, Text ___penitenceInfoText, CustomScrollView ___penitenceScroll)
     {
@@ -131,7 +143,7 @@ internal class ChoosePenitenceWidgetSelectNone_Patch
 
 // Display choose penitence confirmation when choosing custom one
 [HarmonyPatch(typeof(UIController), "ShowConfirmationWidget", typeof(string), typeof(Action), typeof(Action))]
-internal class UIController_Patch
+class UIController_Patch
 {
     public static void Prefix(ref string infoMessage)
     {
@@ -142,7 +154,7 @@ internal class UIController_Patch
 
 // When confirming a custom penitence, activate it
 [HarmonyPatch(typeof(ChoosePenitenceWidget), "ContinueWithNoPenitenceAndClose")]
-internal class ChoosePenitenceWidgetActivate_Patch
+class ChoosePenitenceWidgetActivate_Patch
 {
     public static bool Prefix(ChoosePenitenceWidget __instance)
     {
@@ -158,7 +170,7 @@ internal class ChoosePenitenceWidgetActivate_Patch
 
 // Show custom penitence when abandoning
 [HarmonyPatch(typeof(AbandonPenitenceWidget), "UpdatePenitenceTextsAndDisplayedMedal")]
-internal class AbandonPenitenceWidgetOpen_Patch
+class AbandonPenitenceWidgetOpen_Patch
 {
     public static bool Prefix(Text ___penitenceTitle, Text ___penitenceInfoText, GameObject ___PE01Medal, GameObject ___PE02Medal, GameObject ___PE03Medal)
     {
@@ -182,7 +194,7 @@ internal class AbandonPenitenceWidgetOpen_Patch
     }
 }
 [HarmonyPatch(typeof(AbandonPenitenceWidget), "OnClose")]
-internal class AbandonPenitenceWidgetClose_Patch
+class AbandonPenitenceWidgetClose_Patch
 {
     public static void Postfix(GameObject ___PE02Medal)
     {
@@ -192,7 +204,7 @@ internal class AbandonPenitenceWidgetClose_Patch
 
 // Complete penitence and give item on completion
 [HarmonyPatch(typeof(PenitenceCheckCurrent), "OnEnter")]
-internal class CurrentPenitence_Patch
+class CurrentPenitence_Patch
 {
     public static bool Prefix(PenitenceCheckCurrent __instance)
     {

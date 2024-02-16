@@ -8,17 +8,19 @@
     <Product>Penitence Framework</Product>
     <Authors>Damocles</Authors>
     <Company>Damocles</Company>
-    <Description>A mod for Blasphemous 1</Description>
+    <Description>Framework that allows other mods to implement custom penitences</Description>
     <Version>0.1.0</Version>
 
     <TargetName>PenitenceFramework</TargetName>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-    <RepositoryUrl>https://github.com/Example</RepositoryUrl>
+    <GenerateDocumentationFile>True</GenerateDocumentationFile>
+    <DocumentationFile>bin\Release\$(TargetName).xml</DocumentationFile>
+    <RepositoryUrl>https://github.com/BrandenEK/Blasphemous.Framework.Penitence</RepositoryUrl>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Blasphemous.ModdingAPI" Version="2.0.2" />
+    <PackageReference Include="Blasphemous.ModdingAPI" Version="2.1.0" />
     <PackageReference Include="Blasphemous.ModdingReferences" Version="4.0.67" />
   </ItemGroup>
 

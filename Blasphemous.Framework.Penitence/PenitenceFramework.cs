@@ -9,19 +9,28 @@ using UnityEngine.UI;
 
 namespace Blasphemous.Framework.Penitence;
 
+/// <summary>
+/// Handles using custom penitences
+/// </summary>
 public class PenitenceFramework : BlasMod
 {
-    public PenitenceFramework() : base(ModInfo.MOD_ID, ModInfo.MOD_NAME, ModInfo.MOD_AUTHOR, ModInfo.MOD_VERSION) { }
+    internal PenitenceFramework() : base(ModInfo.MOD_ID, ModInfo.MOD_NAME, ModInfo.MOD_AUTHOR, ModInfo.MOD_VERSION) { }
 
-    public Selection CurrentSelection { get; set; }
-    public System.Action ChooseAction { get; set; }
+    internal Selection CurrentSelection { get; set; }
+    internal System.Action ChooseAction { get; set; }
 
+    /// <summary>
+    /// Recalculate list of penitences after all registered
+    /// </summary>
     protected override void OnAllInitialized()
     {
         if (PenitenceRegister.Total > 0)
             Core.PenitenceManager.ResetPersistence();
     }
 
+    /// <summary>
+    /// When selecting at altar, process input
+    /// </summary>
     protected override void OnUpdate()
     {
         if (CurrentSelection == Selection.Normal)
@@ -39,22 +48,31 @@ public class PenitenceFramework : BlasMod
         }
     }
 
+    /// <summary>
+    /// Acivates a custom penitence
+    /// </summary>
     public void ActivatePenitence(string id)
     {
         PenitenceRegister.Penitences.FirstOrDefault(p => p.Id == id)?.Activate();
     }
 
+    /// <summary>
+    /// Deactivates a custom penitence
+    /// </summary>
     public void DeactivatePenitence(string id)
     {
         PenitenceRegister.Penitences.FirstOrDefault(p => p.Id == id)?.Deactivate();
     }
 
+    /// <summary>
+    /// Gets a penitence by id
+    /// </summary>
     public ModPenitence GetPenitence(string id)
     {
         return PenitenceRegister.Penitences.FirstOrDefault(p => p.Id == id);
     }
 
-    public IEnumerable<SelectSaveSlots.PenitenceData> GetPenitenceData(bool mainMenu)
+    internal IEnumerable<SelectSaveSlots.PenitenceData> GetPenitenceData(bool mainMenu)
     {
         return PenitenceRegister.Penitences.Select(penitence => new SelectSaveSlots.PenitenceData()
         {
@@ -65,7 +83,10 @@ public class PenitenceFramework : BlasMod
         });
     }
 
-    public void ConfirmCustomPenitence()
+    /// <summary>
+    /// Activate penitence when choosing custom one at altar
+    /// </summary>
+    internal void ConfirmCustomPenitence()
     {
         ModPenitence newPenitence = PenitenceRegister.AtIndex(CurrentSelectedCustomPenitence - 1);
         Log("Activating custom penitence: " + newPenitence.Id);
@@ -74,7 +95,7 @@ public class PenitenceFramework : BlasMod
     }
 
     private int m_CurrentSelectedCustomPenitence = 0;
-    public int CurrentSelectedCustomPenitence
+    internal int CurrentSelectedCustomPenitence
     {
         get => m_CurrentSelectedCustomPenitence;
         set
@@ -86,7 +107,7 @@ public class PenitenceFramework : BlasMod
     }
 
     private Image m_UnselectedButtonImage;
-    public Image UnselectedButtonImage
+    internal Image UnselectedButtonImage
     {
         get
         {
@@ -99,7 +120,7 @@ public class PenitenceFramework : BlasMod
     }
 
     private Image m_SelectedButtonImage;
-    public Image SelectedButtonImage
+    internal Image SelectedButtonImage
     {
         get
         {
@@ -112,27 +133,27 @@ public class PenitenceFramework : BlasMod
     }
 
     private Sprite m_NoPenitenceSelectedImage;
-    public Sprite NoPenitenceSelectedImage
+    internal Sprite NoPenitenceSelectedImage
     {
         get => m_NoPenitenceSelectedImage;
         set => m_NoPenitenceSelectedImage ??= value;
     }
 
     private Sprite m_NoPenitenceUnselectedImage;
-    public Sprite NoPenitenceUnselectedImage
+    internal Sprite NoPenitenceUnselectedImage
     {
         get => m_NoPenitenceUnselectedImage;
         set => m_NoPenitenceUnselectedImage ??= value;
     }
 
     private Sprite m_Penitence2Image;
-    public Sprite Penitence2Image
+    internal Sprite Penitence2Image
     {
         get => m_Penitence2Image;
         set => m_Penitence2Image ??= value;
     }
 
-    public enum Selection
+    internal enum Selection
     {
         Normal,
         Bottom,
