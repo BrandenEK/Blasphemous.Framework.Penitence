@@ -52,7 +52,7 @@ public abstract class ModPenitence
     /// By default it marks the current penitence as complete and awards
     /// the reward item defined above.
     /// </summary>
-    public bool Complete(PenitenceCheckCurrent fsmStateAction)
+    public virtual bool Complete(PenitenceCheckCurrent fsmStateAction)
     {
         // Mark penitence as complete
         Core.PenitenceManager.MarkCurrentPenitenceAsCompleted();
