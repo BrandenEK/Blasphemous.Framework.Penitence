@@ -1,5 +1,4 @@
-﻿using Framework.Inventory;
-using Framework.Managers;
+﻿using Framework.Managers;
 using Framework.Penitences;
 using Gameplay.UI.Others.MenuLogic;
 using Gameplay.UI.Widgets;
@@ -213,51 +212,18 @@ class CurrentPenitence_Patch
 
         // I am assuming that this method is only used when the game is over to complete the penitence
         Main.PenitenceFramework.Log("Completing custom penitence: " + modPenitence.Id);
-        Core.PenitenceManager.MarkCurrentPenitenceAsCompleted();
+        
         ModPenitence currPenitence = Main.PenitenceFramework.GetPenitence(modPenitence.Id);
 
-        // If there is not item to give, save and finish
-        if (currPenitence.ItemIdToGive == null || currPenitence.ItemIdToGive == string.Empty)
+        if( !currPenitence.Complete(__instance) )
         {
-            FinishAction();
-            return false;
-        }
-
-        // If the item is not valid or already owned, save and finish
-        BaseInventoryObject obj = Core.InventoryManager.GetBaseObject(currPenitence.ItemIdToGive, currPenitence.ItemTypeToGive);
-        if (obj == null || isItemOwned(currPenitence.ItemIdToGive, currPenitence.ItemTypeToGive))
-        {
-            FinishAction();
-            return false;
-        }
-
-        // Give the item, and once finished, save and finish
-        PopUpWidget.OnDialogClose += FinishAction;
-        obj = Core.InventoryManager.AddBaseObjectOrTears(obj);
-        UIController.instance.ShowObjectPopUp(UIController.PopupItemAction.GetObejct, obj.caption, obj.picture, obj.GetItemType(), 3f, true);
-        return false;
-
-
-        void FinishAction()
-        {
-            PopUpWidget.OnDialogClose -= FinishAction;
+            // Penitence completion failed, save and exit
             Core.Persistence.SaveGame(true);
             __instance.Fsm.Event(__instance.noPenitenceActive);
             __instance.Finish();
         }
 
-        bool isItemOwned(string itemId, InventoryManager.ItemType itemType)
-        {
-            return itemType switch
-            {
-                InventoryManager.ItemType.Bead => Core.InventoryManager.IsRosaryBeadOwned(itemId),
-                InventoryManager.ItemType.Prayer => Core.InventoryManager.IsPrayerOwned(itemId),
-                InventoryManager.ItemType.Relic => Core.InventoryManager.IsRelicOwned(itemId),
-                InventoryManager.ItemType.Sword => Core.InventoryManager.IsSwordOwned(itemId),
-                InventoryManager.ItemType.Quest => Core.InventoryManager.IsQuestItemOwned(itemId),
-                InventoryManager.ItemType.Collectible => Core.InventoryManager.IsCollectibleItemOwned(itemId),
-                _ => false,
-            };
-        }
+        // We're done, skip base method
+        return false;
     }
 }

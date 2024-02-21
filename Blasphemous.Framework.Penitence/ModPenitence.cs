@@ -1,5 +1,9 @@
-﻿using Framework.Managers;
-using UnityEngine;
+﻿using UnityEngine;
+using Framework.Managers;
+using Framework.Inventory;
+using Gameplay.UI.Others.MenuLogic;
+using Gameplay.UI;
+using Tools.Playmaker2.Action;
 
 namespace Blasphemous.Framework.Penitence;
 
@@ -42,6 +46,56 @@ public abstract class ModPenitence
     /// Should perform any necessary actions to deactivate this penitence's functionality
     /// </summary>
     protected internal abstract void Deactivate();
+
+    /// <summary>
+    /// Should perform any necessary actions to complete the penitence
+    /// By default it marks the current penitence as complete and awards
+    /// the reward item defined above.
+    /// </summary>
+    public virtual bool Complete(PenitenceCheckCurrent fsmStateAction)
+    {
+        // Mark penitence as complete
+        Core.PenitenceManager.MarkCurrentPenitenceAsCompleted();
+
+        // If there is not item to give, we're done
+        if( null == ItemIdToGive || string.Empty == ItemIdToGive )
+        {
+            return false;
+        }
+
+        BaseInventoryObject item = Core.InventoryManager.GetBaseObject(ItemIdToGive, ItemTypeToGive);
+        
+        // If the item is not valid, we're done
+        if ( null == item )
+        {
+            return false;
+        }
+
+        // Give the item, and, if successful, cue UI pop-up, then, on dialog close, save and finish 
+        if( !Core.InventoryManager.AddBaseObject(item) )
+        {
+            // Item is already owned, or adding the item failed, we're done
+            return false;
+        }
+
+        PopUpWidget.OnDialogClose += FinishAction;
+        UIController.instance.ShowObjectPopUp( UIController.PopupItemAction.GetObejct,
+                                                item.caption,
+                                                item.picture,
+                                                item.GetItemType(),
+                                                3f,
+                                                true );
+
+        return true;
+
+        void FinishAction()
+        {
+            PopUpWidget.OnDialogClose -= FinishAction;
+            Core.Persistence.SaveGame(true);
+            fsmStateAction.Fsm.Event(fsmStateAction.noPenitenceActive);
+            fsmStateAction.Finish();
+        }        
+    }
 
     internal Sprite InProgressImage { get; private set; }
     internal Sprite CompletedImage { get; private set; }
