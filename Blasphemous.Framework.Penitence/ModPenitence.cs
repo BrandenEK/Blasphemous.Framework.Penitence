@@ -10,7 +10,7 @@ namespace Blasphemous.Framework.Penitence;
 public abstract class ModPenitence
 {
     /// <summary>
-    /// The unique id of this penitence (PEXX...)
+    /// The unique id of this penitence (PE...)
     /// </summary>
     protected internal abstract string Id { get; }
 
@@ -35,7 +35,7 @@ public abstract class ModPenitence
     protected internal abstract void Deactivate();
 
     /// <summary>
-    /// Should perform any necessary actions to complete the penitence
+    /// Should perform any necessary actions to complete the penitence.
     /// By default it marks the current penitence as complete
     /// </summary>
     public virtual IEnumerator Complete()
