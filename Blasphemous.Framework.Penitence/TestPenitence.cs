@@ -4,7 +4,7 @@ namespace Blasphemous.Framework.Penitence;
 
 internal class TestPenitence : ModPenitenceWithBead
 {
-    protected internal override string Id => "PE_Test";
+    protected internal override string Id => "PE_TEST";
 
     protected internal override string Name => "Penitence of Testing";
 
