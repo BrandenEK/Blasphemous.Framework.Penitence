@@ -1,5 +1,4 @@
-﻿using UnityEngine;
-using Framework.Managers;
+﻿using Framework.Managers;
 using System.Collections;
 
 namespace Blasphemous.Framework.Penitence;
@@ -25,6 +24,11 @@ public abstract class ModPenitence
     protected internal abstract string Description { get; }
 
     /// <summary>
+    /// The set of icons for this penitence
+    /// </summary>
+    protected abstract PenitenceImageCollection Images { get; }
+
+    /// <summary>
     /// Should perform any necessary actions to activate this penitence's functionality
     /// </summary>
     protected internal abstract void Activate();
@@ -44,29 +48,6 @@ public abstract class ModPenitence
         yield break;
     }
 
-    internal Sprite InProgressImage { get; private set; }
-    internal Sprite CompletedImage { get; private set; }
-    internal Sprite AbandonedImage { get; private set; }
-    internal Sprite GameplayImage { get; private set; }
-    internal Sprite ChooseSelectedImage { get; private set; }
-    internal Sprite ChooseUnselectedImage { get; private set; }
-
-    /// <summary>
-    /// Stores the associated images for the penitence - only executed on startup
-    /// </summary>
-    protected abstract void LoadImages(out Sprite inProgress, out Sprite completed, out Sprite abandoned, out Sprite gameplay, out Sprite chooseSelected, out Sprite chooseUnselected);
-
-    /// <summary>
-    /// Creates a new custom penitence
-    /// </summary>
-    public ModPenitence()
-    {
-        LoadImages(out Sprite inProgress, out Sprite completed, out Sprite abandoned, out Sprite gameplay, out Sprite chooseSelected, out Sprite chooseUnselected);
-        InProgressImage = inProgress;
-        CompletedImage = completed;
-        AbandonedImage = abandoned;
-        GameplayImage = gameplay;
-        ChooseSelectedImage = chooseSelected;
-        ChooseUnselectedImage = chooseUnselected;
-    }
+    private PenitenceImageCollection _imageCache;
+    internal PenitenceImageCollection CachedImages => _imageCache ??= Images;
 }

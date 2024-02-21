@@ -125,8 +125,8 @@ class ChoosePenitenceWidgetSelectNone_Patch
             ModPenitence currentPenitence = PenitenceRegister.AtIndex(currPenitenceIdx - 1);
             ___penitenceTitle.text = currentPenitence.Name;
             ___penitenceInfoText.text = currentPenitence.Description;
-            Main.PenitenceFramework.SelectedButtonImage.sprite = currentPenitence.ChooseSelectedImage;
-            Main.PenitenceFramework.UnselectedButtonImage.sprite = currentPenitence.ChooseUnselectedImage;
+            Main.PenitenceFramework.SelectedButtonImage.sprite = currentPenitence.CachedImages.ChooseSelected;
+            Main.PenitenceFramework.UnselectedButtonImage.sprite = currentPenitence.CachedImages.ChooseUnselected;
         }
         else
         {
@@ -183,7 +183,7 @@ class AbandonPenitenceWidgetOpen_Patch
 
         Image medalImage = ___PE02Medal.GetComponentInChildren<Image>();
         Main.PenitenceFramework.Penitence2Image = medalImage.sprite;
-        medalImage.sprite = currPenitence.ChooseSelectedImage;
+        medalImage.sprite = currPenitence.CachedImages.ChooseSelected;
         ___penitenceTitle.text = currPenitence.Name;
         ___penitenceInfoText.text = currPenitence.Description;
 

@@ -12,15 +12,15 @@ internal class TestPenitence : ModPenitenceWithBead
 
     protected override string BeadId => "RB01";
 
-    protected override void LoadImages(out Sprite inProgress, out Sprite completed, out Sprite abandoned, out Sprite gameplay, out Sprite chooseSelected, out Sprite chooseUnselected)
+    protected override PenitenceImageCollection Images => new()
     {
-        inProgress = CreateColor(Color.green);
-        completed = CreateColor(Color.yellow);
-        abandoned = CreateColor(Color.black);
-        gameplay = CreateColor(Color.cyan);
-        chooseSelected = null;
-        chooseUnselected = null;
-    }
+        InProgress = CreateColor(Color.green),
+        Completed = CreateColor(Color.yellow),
+        Abandoned = CreateColor(Color.black),
+        Gameplay = CreateColor(Color.cyan),
+        ChooseSelected = null,
+        ChooseUnselected = null
+    };
 
     private Sprite CreateColor(Color color)
     {

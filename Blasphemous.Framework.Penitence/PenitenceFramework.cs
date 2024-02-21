@@ -87,9 +87,9 @@ public class PenitenceFramework : BlasMod
         return PenitenceRegister.Penitences.Select(penitence => new SelectSaveSlots.PenitenceData()
         {
             id = penitence.Id,
-            InProgress = mainMenu ? penitence.InProgressImage : penitence.GameplayImage,
-            Completed = penitence.CompletedImage,
-            Missing = penitence.AbandonedImage
+            InProgress = mainMenu ? penitence.CachedImages.InProgress : penitence.CachedImages.Gameplay,
+            Completed = penitence.CachedImages.Completed,
+            Missing = penitence.CachedImages.Abandoned
         });
     }
 
