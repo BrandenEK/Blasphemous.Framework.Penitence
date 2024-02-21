@@ -6,6 +6,7 @@ using Gameplay.UI;
 using HarmonyLib;
 using I2.Loc;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Tools.Playmaker2.Action;
@@ -201,7 +202,7 @@ class AbandonPenitenceWidgetClose_Patch
     }
 }
 
-// Complete penitence and give item on completion
+// Complete penitence
 [HarmonyPatch(typeof(PenitenceCheckCurrent), "OnEnter")]
 class CurrentPenitence_Patch
 {
@@ -212,18 +213,18 @@ class CurrentPenitence_Patch
 
         // I am assuming that this method is only used when the game is over to complete the penitence
         Main.PenitenceFramework.Log("Completing custom penitence: " + modPenitence.Id);
-        
+
         ModPenitence currPenitence = Main.PenitenceFramework.GetPenitence(modPenitence.Id);
-
-        if( !currPenitence.Complete(__instance) )
-        {
-            // Penitence completion failed, save and exit
-            Core.Persistence.SaveGame(true);
-            __instance.Fsm.Event(__instance.noPenitenceActive);
-            __instance.Finish();
-        }
-
-        // We're done, skip base method
+        Main.Instance.StartCoroutine(AwaitPenitenceCompletion(__instance, currPenitence));
         return false;
+    }
+
+    private static IEnumerator AwaitPenitenceCompletion(PenitenceCheckCurrent action, ModPenitence penitence)
+    {
+        yield return penitence.Complete();
+
+        Core.Persistence.SaveGame(true);
+        action.Fsm.Event(action.noPenitenceActive);
+        action.Finish();
     }
 }

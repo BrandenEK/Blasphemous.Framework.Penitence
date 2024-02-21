@@ -6,10 +6,12 @@ namespace Blasphemous.Framework.Penitence;
 [BepInDependency("Blasphemous.ModdingAPI", "2.1.0")]
 internal class Main : BaseUnityPlugin
 {
+    public static Main Instance { get; private set; }
     public static PenitenceFramework PenitenceFramework { get; private set; }
 
     private void Start()
     {
+        Instance = this;
         PenitenceFramework = new PenitenceFramework();
     }
 }

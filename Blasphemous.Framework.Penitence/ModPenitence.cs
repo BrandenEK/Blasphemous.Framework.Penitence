@@ -1,9 +1,6 @@
 ﻿using UnityEngine;
 using Framework.Managers;
-using Framework.Inventory;
-using Gameplay.UI.Others.MenuLogic;
-using Gameplay.UI;
-using Tools.Playmaker2.Action;
+using System.Collections;
 
 namespace Blasphemous.Framework.Penitence;
 
@@ -28,16 +25,6 @@ public abstract class ModPenitence
     protected internal abstract string Description { get; }
 
     /// <summary>
-    /// The ID of the item to give for completing the penitence
-    /// </summary>
-    protected internal abstract string ItemIdToGive { get; }
-
-    /// <summary>
-    /// The type of the item to give for completing the penitence
-    /// </summary>
-    protected internal abstract InventoryManager.ItemType ItemTypeToGive { get; }
-
-    /// <summary>
     /// Should perform any necessary actions to activate this penitence's functionality
     /// </summary>
     protected internal abstract void Activate();
@@ -49,52 +36,12 @@ public abstract class ModPenitence
 
     /// <summary>
     /// Should perform any necessary actions to complete the penitence
-    /// By default it marks the current penitence as complete and awards
-    /// the reward item defined above.
+    /// By default it marks the current penitence as complete
     /// </summary>
-    public virtual bool Complete(PenitenceCheckCurrent fsmStateAction)
+    public virtual IEnumerator Complete()
     {
-        // Mark penitence as complete
         Core.PenitenceManager.MarkCurrentPenitenceAsCompleted();
-
-        // If there is not item to give, we're done
-        if( null == ItemIdToGive || string.Empty == ItemIdToGive )
-        {
-            return false;
-        }
-
-        BaseInventoryObject item = Core.InventoryManager.GetBaseObject(ItemIdToGive, ItemTypeToGive);
-        
-        // If the item is not valid, we're done
-        if ( null == item )
-        {
-            return false;
-        }
-
-        // Give the item, and, if successful, cue UI pop-up, then, on dialog close, save and finish 
-        if( !Core.InventoryManager.AddBaseObject(item) )
-        {
-            // Item is already owned, or adding the item failed, we're done
-            return false;
-        }
-
-        PopUpWidget.OnDialogClose += FinishAction;
-        UIController.instance.ShowObjectPopUp( UIController.PopupItemAction.GetObejct,
-                                                item.caption,
-                                                item.picture,
-                                                item.GetItemType(),
-                                                3f,
-                                                true );
-
-        return true;
-
-        void FinishAction()
-        {
-            PopUpWidget.OnDialogClose -= FinishAction;
-            Core.Persistence.SaveGame(true);
-            fsmStateAction.Fsm.Event(fsmStateAction.noPenitenceActive);
-            fsmStateAction.Finish();
-        }        
+        yield break;
     }
 
     internal Sprite InProgressImage { get; private set; }
