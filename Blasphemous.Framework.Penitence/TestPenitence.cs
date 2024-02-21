@@ -1,9 +1,8 @@
-﻿using Framework.Managers;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace Blasphemous.Framework.Penitence;
 
-internal class TestPenitence : ModPenitence
+internal class TestPenitence : ModPenitenceWithBead
 {
     protected internal override string Id => "PE_Test";
 
@@ -11,18 +10,24 @@ internal class TestPenitence : ModPenitence
 
     protected internal override string Description => "Used to test features of the Penitence Framework";
 
-    protected internal override string ItemIdToGive => "RB01";
-
-    protected internal override InventoryManager.ItemType ItemTypeToGive => InventoryManager.ItemType.Bead;
+    protected override string BeadId => "RB01";
 
     protected override void LoadImages(out Sprite inProgress, out Sprite completed, out Sprite abandoned, out Sprite gameplay, out Sprite chooseSelected, out Sprite chooseUnselected)
     {
-        inProgress = null;
-        completed = null;
-        abandoned = null;
-        gameplay = null;
+        inProgress = CreateColor(Color.green);
+        completed = CreateColor(Color.yellow);
+        abandoned = CreateColor(Color.black);
+        gameplay = CreateColor(Color.cyan);
         chooseSelected = null;
         chooseUnselected = null;
+    }
+
+    private Sprite CreateColor(Color color)
+    {
+        var tex = new Texture2D(1, 1, TextureFormat.RGB24, false);
+        tex.SetPixel(0, 0, color);
+        tex.Apply();
+        return Sprite.Create(tex, new Rect(0, 0, 1, 1), Vector2.zero, 1, 0, SpriteMeshType.FullRect);
     }
 
     protected internal override void Activate()

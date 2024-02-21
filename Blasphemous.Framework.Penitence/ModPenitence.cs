@@ -1,5 +1,6 @@
-﻿using Framework.Managers;
-using UnityEngine;
+﻿using UnityEngine;
+using Framework.Managers;
+using System.Collections;
 
 namespace Blasphemous.Framework.Penitence;
 
@@ -9,7 +10,7 @@ namespace Blasphemous.Framework.Penitence;
 public abstract class ModPenitence
 {
     /// <summary>
-    /// The unique id of this penitence (PEXX...)
+    /// The unique id of this penitence (PE...)
     /// </summary>
     protected internal abstract string Id { get; }
 
@@ -24,16 +25,6 @@ public abstract class ModPenitence
     protected internal abstract string Description { get; }
 
     /// <summary>
-    /// The ID of the item to give for completing the penitence
-    /// </summary>
-    protected internal abstract string ItemIdToGive { get; }
-
-    /// <summary>
-    /// The type of the item to give for completing the penitence
-    /// </summary>
-    protected internal abstract InventoryManager.ItemType ItemTypeToGive { get; }
-
-    /// <summary>
     /// Should perform any necessary actions to activate this penitence's functionality
     /// </summary>
     protected internal abstract void Activate();
@@ -42,6 +33,16 @@ public abstract class ModPenitence
     /// Should perform any necessary actions to deactivate this penitence's functionality
     /// </summary>
     protected internal abstract void Deactivate();
+
+    /// <summary>
+    /// Should perform any necessary actions to complete the penitence.
+    /// By default it marks the current penitence as complete
+    /// </summary>
+    public virtual IEnumerator Complete()
+    {
+        Core.PenitenceManager.MarkCurrentPenitenceAsCompleted();
+        yield break;
+    }
 
     internal Sprite InProgressImage { get; private set; }
     internal Sprite CompletedImage { get; private set; }
