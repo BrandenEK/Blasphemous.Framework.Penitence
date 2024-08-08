@@ -39,6 +39,11 @@ public abstract class ModPenitence
     protected internal abstract void Deactivate();
 
     /// <summary>
+    /// Called every frame while a gameplay scene is loaded
+    /// </summary>
+    protected internal virtual void Update() { }
+
+    /// <summary>
     /// Should perform any necessary actions to complete the penitence.
     /// By default it marks the current penitence as complete
     /// </summary>

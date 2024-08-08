@@ -22,6 +22,6 @@ public static class PenitenceRegister
             return;
 
         _penitences.Add(penitence);
-        Main.PenitenceFramework.Log($"Registered custom penitence: {penitence.Id}");
+        ModLog.Info($"Registered custom penitence: {penitence.Id}");
     }
 }
