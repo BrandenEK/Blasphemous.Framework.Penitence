@@ -99,7 +99,7 @@ public class PenitenceFramework : BlasMod
     internal void ConfirmCustomPenitence()
     {
         ModPenitence newPenitence = PenitenceRegister.AtIndex(CurrentSelectedCustomPenitence - 1);
-        Log("Activating custom penitence: " + newPenitence.Id);
+        ModLog.Info("Activating custom penitence: " + newPenitence.Id);
         Core.PenitenceManager.ActivatePenitence(newPenitence.Id);
         ChooseAction();
     }

@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using Blasphemous.ModdingAPI;
+using UnityEngine;
 
 namespace Blasphemous.Framework.Penitence;
 
@@ -32,11 +33,11 @@ internal class TestPenitence : ModPenitenceWithBead
 
     protected internal override void Activate()
     {
-        Main.PenitenceFramework.LogError("Test penitence is activated");
+        ModLog.Error("Test penitence is activated");
     }
 
     protected internal override void Deactivate()
     {
-        Main.PenitenceFramework.LogError("Test penitence is deactivated");
+        ModLog.Error("Test penitence is deactivated");
     }
 }
