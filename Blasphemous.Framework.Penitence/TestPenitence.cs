@@ -40,4 +40,10 @@ internal class TestPenitence : ModPenitenceWithBead
     {
         ModLog.Error("Test penitence is deactivated");
     }
+
+    protected internal override void Update()
+    {
+        if (Time.frameCount % 60 == 0)
+            ModLog.Warn("Updating test penitence");
+    }
 }
