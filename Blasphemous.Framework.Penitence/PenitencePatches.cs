@@ -169,12 +169,88 @@ class ChoosePenitenceWidgetActivate_Patch
     }
 }
 
-// Show custom penitence when abandoning
-[HarmonyPatch(typeof(AbandonPenitenceWidget), nameof(AbandonPenitenceWidget.UpdatePenitenceTextsAndDisplayedMedal))]
+// Display buttons and store action when opening widget
+[HarmonyPatch(typeof(AbandonPenitenceWidget), "Open", typeof(Action), typeof(Action))]
 class AbandonPenitenceWidgetOpen_Patch
 {
-    public static bool Prefix(Text ___penitenceTitle, Text ___penitenceInfoText, GameObject ___PE01Medal, GameObject ___PE02Medal, GameObject ___PE03Medal)
+    public static void Postfix(AbandonPenitenceWidget __instance)
     {
+
+        GameObject info = __instance.transform.Find("Info").gameObject;
+        if(null == info)
+        {
+            ModLog.Error("AbandonPenitenceWidgetOpen_Patch: 'Info' object not found!");
+            return;
+        }
+
+        if(null != info.transform.Find("Scroll View"))
+        {
+            ModLog.Info("AbandonPenitenceWidgetOpen_Patch: Scroll already added!");
+            return;
+        }
+
+        // Add scrollview and scrollbar
+        
+        GameObject scrollView = null;
+        GameObject scrollBar = null;
+        {
+            GameObject scrollViewSource = GameObject.Find("Game UI/Content/UI_CHOOSE_PENITENCE/Info/Scroll View");
+            if(null == scrollViewSource)
+            {
+                ModLog.Error("AbandonPenitenceWidgetOpen_Patch: 'Scroll view' object not found!");
+                return;
+            }
+
+            GameObject scrollBarSource = GameObject.Find("Game UI/Content/UI_CHOOSE_PENITENCE/Info/Scrollbar");
+            if(null == scrollBarSource)
+            {
+                ModLog.Error("AbandonPenitenceWidgetOpen_Patch: 'Scrollbar' object not found!");
+                return;
+            }
+
+            scrollView = GameObject.Instantiate(scrollViewSource, info.transform);
+            {
+                scrollView.name = "Scroll View";
+                //scrollView.transform.GetComponent<CustomScrollView>().
+            }
+
+            scrollBar = GameObject.Instantiate(scrollBarSource, info.transform);
+            {
+                scrollBar.name = "Scrollbar";
+                //scrollBar.transform.GetComponent<RectTransform>().anchoredPosition = new Vector2(20, 200);
+            }
+
+        }
+    }
+}
+
+// Show custom penitence when abandoning
+[HarmonyPatch(typeof(AbandonPenitenceWidget), nameof(AbandonPenitenceWidget.UpdatePenitenceTextsAndDisplayedMedal))]
+class AbandonPenitenceWidgetUpdateAndDisplay_Patch
+{
+    public static bool Prefix(AbandonPenitenceWidget __instance, Text ___penitenceTitle, Text ___penitenceInfoText, GameObject ___PE01Medal, GameObject ___PE02Medal, GameObject ___PE03Medal)
+    {
+        Transform scrollView = __instance.transform.Find("Info/Scroll View");
+        if(null == scrollView)
+        {
+            ModLog.Error("AbandonPenitenceWidgetUpdateAndDisplay_Patch: 'scrollView' object not found!");
+        }
+        else
+        {
+            ModLog.Info("AbandonPenitenceWidgetUpdateAndDisplay_Patch: 'scrollView' loaded!");
+        }
+
+        Transform scrollBar = __instance.transform.Find("Info/Scrollbar");
+        if(null == scrollBar)
+        {
+            ModLog.Error("AbandonPenitenceWidgetUpdateAndDisplay_Patch: 'scrollBar' object not found!");
+        }
+        else
+        {
+            ModLog.Info("AbandonPenitenceWidgetUpdateAndDisplay_Patch: 'scrollBar' loaded!");
+            scrollBar.gameObject.SetActive(true);
+        }
+
         if (Core.PenitenceManager.GetCurrentPenitence() is not ModPenitenceSystem modPenitence)
             return true;
 

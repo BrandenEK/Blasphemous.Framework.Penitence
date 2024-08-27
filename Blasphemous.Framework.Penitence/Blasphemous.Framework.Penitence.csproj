@@ -34,8 +34,8 @@
 
     <!-- Get export directories -->
     <PropertyGroup>
-      <DevFolder>C:\Program Files (x86)\Steam\steamapps\common\Blasphemous\Modding\</DevFolder>
-      <PublishFolder>$(SolutionDir)\publish\$(TargetName)</PublishFolder>
+      <DevFolder>C:\DEV\MOD\Blasphemous\Workspace\Blasphemous_Modded\Modding\</DevFolder>
+      <PublishFolder>$(SolutionDir)\publish\$(TargetName)</PublishFolder>      
     </PropertyGroup>
 
     <!-- Export to dev folder -->
