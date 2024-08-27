@@ -1,4 +1,5 @@
 ﻿using Blasphemous.ModdingAPI;
+using Blasphemous.ModdingAPI.Helpers;
 using Blasphemous.ModdingAPI.Input;
 using Framework.Managers;
 using Gameplay.UI.Others.MenuLogic;
@@ -43,6 +44,14 @@ public class PenitenceFramework : BlasMod
     /// </summary>
     protected override void OnUpdate()
     {
+        // Update all penitences while the game is laoded
+        if (SceneHelper.GameSceneLoaded)
+        {
+            foreach (ModPenitence p in PenitenceRegister.Penitences)
+                p.Update();
+        }
+
+        // Handle input on selection altar
         if (CurrentSelection == Selection.Normal)
             return;
 
@@ -99,7 +108,7 @@ public class PenitenceFramework : BlasMod
     internal void ConfirmCustomPenitence()
     {
         ModPenitence newPenitence = PenitenceRegister.AtIndex(CurrentSelectedCustomPenitence - 1);
-        Log("Activating custom penitence: " + newPenitence.Id);
+        ModLog.Info("Activating custom penitence: " + newPenitence.Id);
         Core.PenitenceManager.ActivatePenitence(newPenitence.Id);
         ChooseAction();
     }
