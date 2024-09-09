@@ -9,7 +9,7 @@
     <Authors>Damocles</Authors>
     <Company>Damocles</Company>
     <Description>Framework that allows other mods to implement custom penitences</Description>
-    <Version>0.2.1</Version>
+    <Version>0.2.2</Version>
 
     <TargetName>PenitenceFramework</TargetName>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
@@ -34,7 +34,7 @@
 
     <!-- Get export directories -->
     <PropertyGroup>
-      <DevFolder>C:\DEV\MOD\Blasphemous\Workspace\Blasphemous_Modded\Modding\</DevFolder>
+      <DevFolder>C:\Program Files (x86)\Steam\steamapps\common\Blasphemous\Modding\</DevFolder>
       <PublishFolder>$(SolutionDir)\publish\$(TargetName)</PublishFolder>      
     </PropertyGroup>
 
