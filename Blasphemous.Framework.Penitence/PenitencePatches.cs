@@ -192,9 +192,6 @@ class AbandonPenitenceWidgetOpen_Patch
 
         // --- Add scrollview and scrollbar UI elements ---
         {   
-            GameObject scrollView = null;
-            GameObject scrollBar  = null;
-
             // --- Retrieve the UI elements from the Choose Penitence widget ---
             
             GameObject scrollViewSource = GameObject.Find("Game UI/Content/UI_CHOOSE_PENITENCE/Info/Scroll View");
@@ -213,14 +210,14 @@ class AbandonPenitenceWidgetOpen_Patch
 
             // --- Create a copy of the UI elements ---
 
-            scrollView = GameObject.Instantiate(scrollViewSource, info.transform);
+            GameObject scrollView = GameObject.Instantiate(scrollViewSource, info.transform);
             if(null == scrollView)
             {
                 ModLog.Error("AbandonPenitenceWidgetOpen_Patch: Failed to instantiate new 'Scroll View' object!");
                 return true;
             }
 
-            scrollBar = GameObject.Instantiate(scrollBarSource, info.transform);
+            GameObject scrollBar = GameObject.Instantiate(scrollBarSource, info.transform);
             if(null == scrollBar)
             {
                 ModLog.Error("AbandonPenitenceWidgetOpen_Patch: Failed to instantiate new 'Scrollbar' object!");
@@ -258,7 +255,7 @@ class AbandonPenitenceWidgetOpen_Patch
                 scrollViewRect.sizeDelta = new Vector2( scrollViewRect.sizeDelta.x, abandonTextRect.sizeDelta.y);
 
                 // Same with the scrollbar, just stretch it vertically
-                scrollBarRect.sizeDelta = new Vector2( scrollBarRect.sizeDelta.x, abandonTextRect.sizeDelta.y );                               
+                scrollBarRect.sizeDelta = new Vector2( scrollBarRect.sizeDelta.x, abandonTextRect.sizeDelta.y );
             }
         }
 
@@ -270,9 +267,9 @@ class AbandonPenitenceWidgetOpen_Patch
 [HarmonyPatch(typeof(AbandonPenitenceWidget), nameof(AbandonPenitenceWidget.UpdatePenitenceTextsAndDisplayedMedal))]
 class AbandonPenitenceWidgetUpdateAndDisplay_Patch
 {
-    public static bool Prefix(AbandonPenitenceWidget __instance, Text ___penitenceTitle, Text ___penitenceInfoText, GameObject ___PE01Medal, GameObject ___PE02Medal, GameObject ___PE03Medal)
+    public static bool Prefix(Text ___penitenceTitle, Text ___penitenceInfoText, GameObject ___PE01Medal, GameObject ___PE02Medal, GameObject ___PE03Medal)
     {
-        ___penitenceInfoText.gameObject.SetActive(true); // Reactivate in case it was deactivated previously
+        ___penitenceInfoText.gameObject.SetActive(true); // Reactivate in case it was deactivated earlier
 
         if (Core.PenitenceManager.GetCurrentPenitence() is not ModPenitenceSystem modPenitence)
             return true;
@@ -291,51 +288,60 @@ class AbandonPenitenceWidgetUpdateAndDisplay_Patch
         ___PE02Medal.SetActive(true);
         ___PE03Medal.SetActive(false);
 
+        return false;
+    }
+
+    public static void Postfix(AbandonPenitenceWidget __instance, Text ___penitenceInfoText)
+    {
         GameObject scrollView = __instance.transform.Find("Info/Scroll View").gameObject;
         GameObject scrollBar  = __instance.transform.Find("Info/Scrollbar").gameObject;
+        Text scrollText       = __instance.transform.Find("Info/Scroll View/Viewport/Content/Penitence_Text").GetComponent<Text>();
 
         // Check if we have our toys
         {
             if(null == scrollView)
             {
                 ModLog.Error("AbandonPenitenceWidgetUpdateAndDisplay_Patch: 'scrollView' object not found!");
-                return false;
+                return;
             }            
 
             if(null == scrollBar)
             {
                 ModLog.Error("AbandonPenitenceWidgetUpdateAndDisplay_Patch: 'scrollBar' object not found!");
-                return false;
+                return;
             }
-        }
-        
-        // Check if text overflows and we need a scrollbar
-        if( LayoutUtility.GetPreferredHeight(___penitenceInfoText.rectTransform)
-            >
-            ___penitenceInfoText.gameObject.GetComponent<RectTransform>().rect.height )
-        {            
-            Text scrollText = scrollView.transform.Find("Viewport/Content/Penitence_Text").GetComponent<Text>();
+
             if(null == scrollText)
             {
                 ModLog.Error("AbandonPenitenceWidgetUpdateAndDisplay_Patch: 'Penitence_Text' object not found!");
-                return false;
+                return;
             }
+        }
 
-            scrollText.text = ___penitenceInfoText.text;
+        // Update text in scroll view area to match base text
+        scrollText.text = ___penitenceInfoText.text;
 
+        // Check the final height of the text box vs the expected height
+        float TextboxFinalHeight    = LayoutUtility.GetPreferredHeight(___penitenceInfoText.rectTransform);
+        float TextboxExpectedHeight = ___penitenceInfoText.gameObject.GetComponent<RectTransform>().rect.height;
+
+        if( TextboxFinalHeight <= TextboxExpectedHeight )
+        {
+            ___penitenceInfoText.gameObject.SetActive(true);
+            scrollBar.SetActive(false);
+            scrollView.SetActive(false);
+
+            return; // Text fits the text box, do nothing else
+        }
+                
+        // Replace basic textbox with scroll view        
+        {            
             ___penitenceInfoText.gameObject.SetActive(false);
             scrollBar.SetActive(true);
             scrollView.SetActive(true);
 
             scrollView.GetComponent<CustomScrollView>().NewContentSetted();
         }
-        else
-        {
-            scrollBar.SetActive(false);
-            scrollView.SetActive(false);
-        }       
-
-        return false;
     }
 }
 
