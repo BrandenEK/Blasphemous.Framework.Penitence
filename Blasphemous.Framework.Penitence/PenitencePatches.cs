@@ -170,7 +170,7 @@ class ChoosePenitenceWidgetActivate_Patch
 }
 
 // Add the scroll view UI elements when when opening widget
-[HarmonyPatch(typeof(AbandonPenitenceWidget), "Open", typeof(Action), typeof(Action))]
+[HarmonyPatch(typeof(AbandonPenitenceWidget), nameof(AbandonPenitenceWidget.Open), typeof(Action), typeof(Action))]
 class AbandonPenitenceWidgetOpen_Patch
 {
     public static bool Prefix(AbandonPenitenceWidget __instance)
