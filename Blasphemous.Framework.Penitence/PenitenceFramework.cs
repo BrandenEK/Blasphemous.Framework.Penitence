@@ -29,15 +29,13 @@ public class PenitenceFramework : BlasMod
             Core.PenitenceManager.ResetPersistence();
     }
 
-#if DEBUG
     /// <summary>
     /// Register the test penitence
     /// </summary>
     protected override void OnRegisterServices(ModServiceProvider provider)
     {
-        provider.RegisterPenitence(new TestPenitence());
+        //provider.RegisterPenitence(new TestPenitence());
     }
-#endif
 
     /// <summary>
     /// When selecting at altar, process input
