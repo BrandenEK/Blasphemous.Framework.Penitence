@@ -21,7 +21,7 @@
 
   <ItemGroup>
     <PackageReference Include="Blasphemous.GameLibs" Version="4.0.67" />
-    <PackageReference Include="Blasphemous.ModdingAPI" Version="2.4.1" />
+    <PackageReference Include="Blasphemous.ModdingAPI" Version="3.0.0" />
   </ItemGroup>
 
   <Target Name="Development" AfterTargets="PostBuildEvent">
